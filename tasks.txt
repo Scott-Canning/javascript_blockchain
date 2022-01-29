@@ -1,0 +1,22 @@
+The goal of this project is to incorporate at least one of these components into your blockchain project.
+
+Public Key Cryptography - Authentication 🔏
+Proof of Work - Security 🔒
+Mining Rewards - Financial Incentives 💰
+Linked Data Structure - Chronology ⌛
+Peer to Peer Network - Permissionless 🌐
+
+1) build blockchain
+    - blockchain
+        - adjusts difficulty based on throughput
+    - block
+    - utxo models
+
+2) build miner node
+    - object with mempool
+    - can access the blockchain's difficulty
+    - creates block from 
+    - can propogate messages to other nodes
+
+
+- added dynamic difficulty based on average block production time
