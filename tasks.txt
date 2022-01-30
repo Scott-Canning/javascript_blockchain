@@ -8,7 +8,7 @@ Peer to Peer Network - Permissionless 🌐
 
 1) build blockchain
     - blockchain
-        - adjusts difficulty based on throughput
+
     - block
     - utxo models
 
@@ -19,4 +19,4 @@ Peer to Peer Network - Permissionless 🌐
     - can propogate messages to other nodes
 
 
-- added dynamic difficulty based on average block production time
+- added dynamic difficulty based on average block production time (adjusts difficulty based on avg throughput)

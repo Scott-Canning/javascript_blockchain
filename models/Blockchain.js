@@ -1,9 +1,17 @@
 const Block = require('./Block.js');
+// const DIFF_ADJ_EPOCH = 32;
+// const TGT_BLOCK_TIME = 5000;
 
 class Blockchain {
     constructor() {
         this.blocks = [];
-        this.blockTimes = []; // track difficulty
+        this.blockTimes = [];        // track difficulty
+        this.difficulty = 2;
+        this.diffAdjEpoch = 32;      // adjust difficulty every 32 blocks
+        this.targetDifficulty = BigInt("0x" + "0".repeat(this.difficulty) + "F".repeat(64 - this.difficulty));
+        this.targetBlockTime = 5000; // target 5 second block time
+        this.coinbase = 50;
+        //this.rewardAdjEpoch = 1000;  // half coinbase reward every 1000 blocks
     };
     
     getBlockHeight() {
@@ -12,6 +20,22 @@ class Blockchain {
 
     addBlock(block){
         this.blocks.push(block);
+    }
+
+    adjustTargetDiff(average) {
+        if(average < this.targetBlockTime) {
+            this.difficulty++;
+            console.log("\n target difficulty update (+): ", this.difficulty)
+        } else if (average > this.targetBlockTime) {
+            this.difficulty--;
+            console.log("\n target difficulty update (-): ", this.difficulty)
+        }
+        return BigInt("0x" + "0".repeat(this.difficulty) + "F".repeat(64 - this.difficulty));
+    }
+
+    blocktime() {
+        return this.blocks[this.getBlockHeight()].timestamp - 
+               this.blocks[this.getBlockHeight() - 1].timestamp;
     }
 
     // genesisBlock() {
