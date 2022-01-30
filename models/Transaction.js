@@ -1,25 +1,26 @@
+const { utxos } = require('../db');
+
 class Transaction {
-    constructor(inputs, outputs) {
-        this.inputs = inputs;
-        this.outputs = outputs;
+    constructor(inputUTXOs, outputUTXOs) {
+        this.inputs = inputUTXOs;
+        this.outputs = outputUTXOs;
     }
-    // added from class work
-    /*
-    execute() {
+
+    validateUTXOs() {
         let inputUTXOsum = 0;
         let outputUTXOsum = 0;
 
         // ensure no input UTXOs have been spent & sum input UTXOs
-        for(let i = 0; i < this.inputUTXOs.length; i++){
-            if(this.inputUTXOs[i].spent){
+        for(let i = 0; i < this.inputs.length; i++){
+            if(this.inputs[i].spent){
                 throw Error;
             }
-            inputUTXOsum += this.inputUTXOs[i].amount;
+            inputUTXOsum += this.inputs[i].amount;
         }
 
         // sum output UTXOs
-        for (let i = 0; i < this.outputUTXOs.length; i++) {
-            outputUTXOsum += this.outputUTXOs[i].amount;
+        for (let i = 0; i < this.outputs.length; i++) {
+            outputUTXOsum += this.outputs[i].amount;
         }
 
         // throw error if total inputUTXOs fail to cover total outputUTXOs
@@ -27,13 +28,19 @@ class Transaction {
             throw Error;
         }
 
-        this.inputUTXOs.map((tx) => {
+        // store utxos in db object
+        this.outputs.forEach((output) => {
+            utxos.push(output)
+        });
+        
+        // mark all inputs as spent
+        this.inputs.map((tx) => {
                 return tx.spent = true;
         });
 
         this.fee = inputUTXOsum - outputUTXOsum;
     }
-    */
+
 }
 
 module.exports = Transaction;

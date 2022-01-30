@@ -27,6 +27,12 @@ class Block {
     hasSpace() {
          return (this.txCount < this.blockSize);
     }
+
+    validateBlock() {
+        // coinbase tx
+        // other txs
+        this.transactions.forEach(tx => tx.validateUTXOs());
+    }
 };
 
 module.exports = Block;

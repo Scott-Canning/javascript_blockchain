@@ -20,11 +20,20 @@ function mine() {
 
     // create new block
     const block = new Block();
-    const coinbase_utxo =  new UTXO(PUBLIC_KEY, db.blockchain.coinbase);
-    const coinbaseTx = new Transaction([], [coinbase_utxo]);
-    block.addTransaction(coinbaseTx);
-    console.log(block);
 
+    // construct coinbase transaction
+    const coinbase_in =  new UTXO('0x0', db.blockchain.coinbase);
+    const coinbase_out =  new UTXO(PUBLIC_KEY, db.blockchain.coinbase);
+    const coinbaseTx = new Transaction([coinbase_in], [coinbase_out]);
+    block.addTransaction(coinbaseTx);
+    console.log(coinbase_out);
+    
+    // loop over mempool and add transactions until block is full (based on fees?)
+    
+    // validate block and update UTXOs to spent
+    block.validateBlock();
+
+    // hash block
     while('0x' + block.hashBlock() >= db.blockchain.targetDifficulty) {
         block.nonce++;
     }
