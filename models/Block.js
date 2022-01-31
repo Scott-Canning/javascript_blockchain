@@ -1,10 +1,12 @@
 const SHA256 = require("crypto-js/sha256");
 
+
 class Block {
     constructor() {
         this.transactions = []; // new ArrayBuffer(1024);
         this.timestamp = Date.now(); //.toString();
         this.nonce = 0;
+
         // add merkle root
         // this.merkleRoot...
         // this.txCount = 0;
@@ -19,7 +21,8 @@ class Block {
     hashBlock() {
         // add pointer to prior block
         return SHA256(this.timestamp + "" + 
-                      this.nonce + 
+                      this.nonce +
+                      this.previousBlockHash +
                       JSON.stringify(this.transactions)
                       ).toString();
     }

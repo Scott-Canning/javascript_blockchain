@@ -7,6 +7,12 @@ class Transaction {
     }
 
     validateUTXOs() {
+        // if UTXO is a coinbase transaction, handle separately
+        // if(this.inputs[0].coinbase === true) {
+        //     //this.inputs[0].spent = true;
+        //     //utxos.push(this.outputs[0]);
+        // }
+
         let inputUTXOsum = 0;
         let outputUTXOsum = 0;
 
@@ -38,7 +44,7 @@ class Transaction {
                 return tx.spent = true;
         });
 
-        this.fee = inputUTXOsum - outputUTXOsum;
+        //this.fee = inputUTXOsum - outputUTXOsum;
     }
 
 }

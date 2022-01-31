@@ -1,4 +1,6 @@
+const { timingSafeEqual } = require('crypto');
 const Block = require('./Block.js');
+const SHA256 = require("crypto-js/sha256");
 // const DIFF_ADJ_EPOCH = 32;
 // const TGT_BLOCK_TIME = 5000;
 
@@ -6,29 +8,42 @@ class Blockchain {
     constructor() {
         this.blocks = [];
         this.blockTimes = [];        // track difficulty
-        this.difficulty = 2;
+        this.difficulty = 2;         // init difficulty
         this.diffAdjEpoch = 32;      // adjust difficulty every 32 blocks
         this.targetDifficulty = BigInt("0x" + "0".repeat(this.difficulty) + "F".repeat(64 - this.difficulty));
         this.targetBlockTime = 5000; // target 5 second block time
+        this.targetBlockTimeBand = 200;
+        this.coinSupply = 21000000;
         this.coinbase = 50;
+        this.mempool = [];
+        this.genesisBlock = this.mineGenesisBlock();
         //this.rewardAdjEpoch = 1000;  // half coinbase reward every 1000 blocks
     };
     
+    mineGenesisBlock() {
+        const genesisBlock = new Block();
+        genesisBlock.previousBlockHash = SHA256("The Times 03/Jan/2009 Chancellor on brink of second bailout for banks");
+        this.blocks.push(genesisBlock);
+    }
+
     getBlockHeight() {
         return this.blocks.length - 1;
     }
 
     addBlock(block){
+        if(this.getBlockHeight() > 0) {
+            block.previousHash = this.blocks[this.getBlockHeight() - 1].hashBlock();
+        }
         this.blocks.push(block);
     }
 
     adjustTargetDiff(average) {
-        if(average < this.targetBlockTime) {
+        if((average + this.targetBlockTimeBand) < this.targetBlockTime) {
             this.difficulty++;
-            console.log("\n target difficulty update (+): ", this.difficulty)
-        } else if (average > this.targetBlockTime) {
+            console.log("\nTarget difficulty update (+): ", this.difficulty, "\n");
+        } else if ((average - this.targetBlockTimeBand) > this.targetBlockTime) {
             this.difficulty--;
-            console.log("\n target difficulty update (-): ", this.difficulty)
+            console.log("\n target difficulty update (-): ", this.difficulty, "\n");
         }
         return BigInt("0x" + "0".repeat(this.difficulty) + "F".repeat(64 - this.difficulty));
     }
@@ -37,12 +52,6 @@ class Blockchain {
         return this.blocks[this.getBlockHeight()].timestamp - 
                this.blocks[this.getBlockHeight() - 1].timestamp;
     }
-
-    // genesisBlock() {
-    //     let block = new Block();
-    //     this.chain.push(block);
-    // }
-
 
 
     // addBlock(newBlock) {

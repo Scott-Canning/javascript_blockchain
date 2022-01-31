@@ -2,7 +2,7 @@ const db = require('../db');
 const Block = require('../models/Block');
 const Transaction = require('../models/Transaction');
 const UTXO = require('../models/UTXO');
-const { PUBLIC_KEY, PRIVATE_KEY } = require('../config');
+const { PUBLIC_KEY } = require('../config');
 
 let mining = false;
 
@@ -22,14 +22,17 @@ function mine() {
     const block = new Block();
 
     // construct coinbase transaction
-    const coinbase_in =  new UTXO('0x0', db.blockchain.coinbase);
-    const coinbase_out =  new UTXO(PUBLIC_KEY, db.blockchain.coinbase);
+    const coinbase_in = new UTXO('0x0', db.blockchain.coinbase, true);
+    const coinbase_out = new UTXO(PUBLIC_KEY, db.blockchain.coinbase, true);
+
+    // naive supply reduction
+    db.blockchain.coinSupply - db.blockchain.coinbase;
     const coinbaseTx = new Transaction([coinbase_in], [coinbase_out]);
     block.addTransaction(coinbaseTx);
-    console.log(coinbase_out);
     
     // loop over mempool and add transactions until block is full (based on fees?)
     
+
     // validate block and update UTXOs to spent
     block.validateBlock();
 
@@ -38,9 +41,9 @@ function mine() {
         block.nonce++;
     }
 
-    db.blockchain.blocks.push(new Block());
+    db.blockchain.addBlock(block);
     console.log(`\nMined block: ${db.blockchain.getBlockHeight()} \nHash: ${'0x' + block.hashBlock()} \nNonce: ${block.nonce}`);
-    
+    console.log(block);
     // calculate blocktime for adjacent blocks after genensis block
     let blocktime = 0;
     if (db.blockchain.getBlockHeight() > 0){
@@ -53,6 +56,7 @@ function mine() {
     if (db.blockchain.getBlockHeight() % db.blockchain.diffAdjEpoch === 0){
         const sum = db.blockchain.blockTimes.reduce((a, b) => a + b, 0);
         const averageBlockTime = (sum / db.blockchain.blockTimes.length) || 0;
+        console.log("Average Block Time (10): ", averageBlockTime);
         // adjust target difficulty
         db.blockchain.targetDifficulty = db.blockchain.adjustTargetDiff(averageBlockTime);
         db.blockchain.blockTimes = [];

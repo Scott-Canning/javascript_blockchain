@@ -19,9 +19,11 @@ const server = new jayson.Server({
         const addressUTXOs = utxos.filter(utxo => {
             return utxo.owner === address && !utxo.spent;
         });
-        console.log("addressUTXOs: ", addressUTXOs);
+        // console.log("addressUTXOs: ", utxos.map(x => x.owner), address);
+        // console.log("addressUTXOs: ", addressUTXOs.length);
         const balance = addressUTXOs.reduce((prevVal, currVal) => 
                                              prevVal + currVal.amount, 0);
+        console.log(balance)                                        
         callback(null, balance);
     }
 });
